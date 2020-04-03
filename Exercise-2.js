@@ -17,7 +17,7 @@ const cloneDeep = require("lodash.clonedeep"),
           cache.oldMessages = cloneDeep(oldMessages);
           return persistence().del(globals.modelNames.CommunicationMessage, { findBy: { step_id: globals.generateUuidFromString(stepId) } });
         })();
-        const savedNewMessages = await Promise.resolve(
+        const savedNewMessages = await Promise.all(
           messages.reduce((promises, message) => [
             ...promises,
             persistence().save(globals.modelNames.CommunicationMessage, message)
@@ -28,7 +28,7 @@ const cloneDeep = require("lodash.clonedeep"),
           let messageMap = new Map();
           cache.newMessages.forEach(message => messageMap.set(message.id, message));
 
-          return Promise.resolve(
+          return Promise.all(
             cache.oldMessages.reduce((promises, message) =>
               !messageMap.has(message.id) ? [
                 ...promises,
